@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import uuid
 from datetime import UTC, datetime
 
@@ -11,8 +10,7 @@ from ..app.core.db.database import AsyncSession, async_engine, local_session
 from ..app.core.security import get_password_hash
 from ..app.models.user import User
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
 
 
 async def create_first_user(session: AsyncSession) -> None:
