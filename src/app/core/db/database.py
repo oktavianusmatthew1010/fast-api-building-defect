@@ -17,9 +17,10 @@ ssl_context = ssl.create_default_context()
 async_engine = create_async_engine(
     settings.ASYNC_URL,  # Use the fully constructed URL
     echo=True,
-    pool_size=5,
+    pool_size=20,
     max_overflow=10,
-    pool_timeout=30,
+    pool_timeout=30,  # seconds
+    pool_recycle=3600,  # recycle connections after 1 hour
     pool_pre_ping=True,
     connect_args={"ssl": ssl_context}
 )
