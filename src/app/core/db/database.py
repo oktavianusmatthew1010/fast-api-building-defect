@@ -1,5 +1,5 @@
 from collections.abc import AsyncGenerator
-
+import ssl
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass
@@ -13,6 +13,7 @@ class Base(DeclarativeBase, MappedAsDataclass):
 
 
 #DATABASE_URI = settings.ASYNC_URL
+ssl_context = ssl.create_default_context()
 async_engine = create_async_engine(
     settings.ASYNC_URL,  # Use the fully constructed URL
     echo=True,
@@ -20,7 +21,7 @@ async_engine = create_async_engine(
     max_overflow=10,
     pool_timeout=30,
     pool_pre_ping=True,
-    
+    connect_args={"ssl": ssl_context}
 )
 
 AsyncSessionLocal = sessionmaker(
