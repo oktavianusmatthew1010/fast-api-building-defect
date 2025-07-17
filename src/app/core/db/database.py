@@ -12,9 +12,7 @@ class Base(DeclarativeBase, MappedAsDataclass):
 
 
 
-DATABASE_PREFIX = settings.POSTGRES_ASYNC_PREFIX
-DATABASE_URL = f"{DATABASE_PREFIX}{DATABASE_URI}"
-DATABASE_URI = settings.ASYNC_URL
+#DATABASE_URI = settings.ASYNC_URL
 async_engine = create_async_engine(
     settings.ASYNC_URL,  # Use the fully constructed URL
     echo=True,
