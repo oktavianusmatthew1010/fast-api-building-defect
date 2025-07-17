@@ -72,7 +72,7 @@ class PostgresSettings(DatabaseSettings):
         ssl = "?ssl=require" if self.POSTGRES_SSL else ""
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}{ssl_mode}"
+            f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
         
     @property
@@ -82,7 +82,7 @@ class PostgresSettings(DatabaseSettings):
     @property
     def ASYNC_URL(self) -> str:
         ssl_mode = "?ssl=require" if self.POSTGRES_SSL else ""
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}{ssl_mode}"
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         
 class FirstUserSettings(BaseSettings):
     ADMIN_NAME: str = config("ADMIN_NAME", default="admin")
