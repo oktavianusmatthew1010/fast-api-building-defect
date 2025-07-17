@@ -69,7 +69,7 @@ class PostgresSettings(DatabaseSettings):
     
     @property
     def ASYNC_URL(self) -> str:
-        ssl_mode = "?sslmode=require" if self.POSTGRES_SSL else ""
+        ssl_mode = "?ssl=require" if self.POSTGRES_SSL else ""
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
             f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}{ssl_mode}"
