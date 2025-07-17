@@ -23,9 +23,13 @@ async_engine = create_async_engine(
     pool_recycle=3600,  # recycle connections after 1 hour
     pool_pre_ping=True,
     connect_args={
-        "ssl": "require", 
+        "ssl": "require",  # For SSL connections
         "timeout": 10,
-        "command_timeout": 10
+        "command_timeout": 15,
+        "server_settings": {
+            "application_name": "PSFPFI-API",
+            "idle_in_transaction_session_timeout": "30000"  # 30 seconds
+        }
     }
 )
 
