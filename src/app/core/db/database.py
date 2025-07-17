@@ -11,10 +11,10 @@ class Base(DeclarativeBase, MappedAsDataclass):
     pass
 
 
-DATABASE_URI = settings.POSTGRES_URI
+DATABASE_URI2 = settings.POSTGRES_URI
 DATABASE_PREFIX = settings.POSTGRES_ASYNC_PREFIX
 DATABASE_URL = f"{DATABASE_PREFIX}{DATABASE_URI}"
-
+DATABASE_URI = settings.ASYNC_URL
 async_engine = create_async_engine(
     settings.DATABASE_URL,
     echo=True,  # Enable for debugging
