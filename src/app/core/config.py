@@ -68,6 +68,11 @@ class PostgresSettings(DatabaseSettings):
     POSTGRES_SSL: bool = config("POSTGRES_SSL", default=False, cast=bool)
     
     @property
+    def POSTGRES_URI(self) -> str:
+        """Backwards compatibility alias for ASYNC_URL"""
+        return self.ASYNC_URL
+        
+    @property
     def SYNC_URL(self) -> str:
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
     
