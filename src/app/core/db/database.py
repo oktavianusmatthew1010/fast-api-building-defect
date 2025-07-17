@@ -22,7 +22,11 @@ async_engine = create_async_engine(
     pool_timeout=30,  # seconds
     pool_recycle=3600,  # recycle connections after 1 hour
     pool_pre_ping=True,
-    connect_args={"ssl": ssl_context}
+    connect_args={
+        "ssl": "require", 
+        "timeout": 10,
+        "command_timeout": 10
+    }
 )
 
 AsyncSessionLocal = sessionmaker(
