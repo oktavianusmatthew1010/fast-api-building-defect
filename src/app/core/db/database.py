@@ -16,12 +16,12 @@ DATABASE_PREFIX = settings.POSTGRES_ASYNC_PREFIX
 DATABASE_URL = f"{DATABASE_PREFIX}{DATABASE_URI}"
 
 async_engine = create_async_engine(
-    DATABASE_URL,
-    echo=False,
-    future=True,
-    pool_pre_ping=True,
-    pool_recycle=1800,
-    connect_args={"timeout": 15},
+    settings.DATABASE_URL,
+    echo=True,  # Enable for debugging
+    pool_size=5,
+    max_overflow=10,
+    pool_timeout=30,  # 30 seconds
+    pool_pre_ping=True,  # Important for connection health checks
 )
 
 local_session = async_sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
