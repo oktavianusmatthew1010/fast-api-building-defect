@@ -47,6 +47,7 @@ async def login_for_access_token(
     response: Response,
     login_data: LoginRequest,
     db: AsyncSession = Depends(async_get_db),
+    
 ) -> dict[str, str]:
     user = await authenticate_user(username_or_email=login_data.username, password=login_data.password, db=db)
     if not user:
@@ -62,7 +63,7 @@ async def login_for_access_token(
         key="refresh_token", value=refresh_token, httponly=True, secure=True, samesite="lax", max_age=max_age
     )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token,"refresh_token":refresh_token, "token_type": "bearer","username":login_data.username}
 
 @router.post("/refresh")
 async def refresh_access_token(request: Request, db: AsyncSession = Depends(async_get_db)) -> dict[str, str]:

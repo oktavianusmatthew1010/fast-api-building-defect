@@ -40,6 +40,7 @@ class LoginRequest(BaseModel):
     username: str
     password: str
     
+    
 class PersistentDeletion(BaseModel):
     deleted_at: datetime | None = Field(default=None)
     is_deleted: bool = False
@@ -56,6 +57,10 @@ class PersistentDeletion(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    refresh_token:str
+    username: str
+    
+    
 
 
 class TokenData(BaseModel):

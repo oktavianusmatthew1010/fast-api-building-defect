@@ -2,7 +2,7 @@ import uuid as uuid_pkg
 from datetime import UTC, datetime
 from sqlalchemy import DateTime, ForeignKey, String,Integer,Float
 from sqlalchemy.orm import Mapped, mapped_column
-
+from sqlalchemy.orm import relationship
 from app.core.db.database import Base
 
 
@@ -18,7 +18,6 @@ class Building(Base):
     levels_count: Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
     sides_count: Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
     owner_id: Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
-    project_id: Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
     latitude: Mapped[float] = mapped_column(Float,  default="0.0", nullable=False)
     longitude: Mapped[int] = mapped_column(Float,  default="0.0", nullable=False)
     status_construction : Mapped[int] = mapped_column(Float,  default="0.0", nullable=False)
@@ -28,3 +27,8 @@ class Building(Base):
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     is_deleted: Mapped[bool] = mapped_column(default=False, index=True)
+    
+    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), index=True, default=None, init=False)
+
+    
+    
