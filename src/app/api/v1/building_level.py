@@ -18,10 +18,6 @@ async def write_building_level(
     request: Request, building_level: BuildingLevelCreate, db: Annotated[AsyncSession, Depends(async_get_db)]
 ) -> BuildingLevelRead:
     building_level_internal_dict = building_level.model_dump()
-    db_building_level = await crud_building_level.exists(db=db, name=building_level_internal_dict["name"])
-    if db_building_level:
-        raise DuplicateValueException("Building Level not available")
-
     building_level_internal = BuildingLevelCreateInternal(**building_level_internal_dict)
     created_building_level = await crud_building_level.create(db=db, object=building_level_internal)
 
@@ -42,13 +38,23 @@ async def read_building_levels(
     return response
 
 
-@router.get("/buildinglevel/{name}", response_model=BuildingLevelRead)
-async def read_building_level(request: Request, name: str, db: Annotated[AsyncSession, Depends(async_get_db)]) -> BuildingLevelRead:
-    db_building_level = await crud_building_level.get(db=db, name=name, schema_to_select=BuildingLevelRead)
-    if db_building_level is None:
-        raise NotFoundException("Building Level not found")
+@router.get("/buildinglevel/{building_id}", response_model=PaginatedListResponse[BuildingLevelRead])
+async def read_building_levels(
+    request: Request,
+    building_id: int,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    page: int = 1,
+    items_per_page: int = 10
+) -> dict:
+    building_level_data = await crud_building_level.get_multi(
+        db=db,
+        building_id=building_id,
+        offset=compute_offset(page, items_per_page),
+        limit=items_per_page
+    )
+    response = paginated_response(crud_data=building_level_data, page=page, items_per_page=items_per_page)
+    return response
 
-    return cast(BuildingLevelRead, db_building_level)
 
 
 @router.patch("/buildinglevel/{name}", dependencies=[Depends(get_current_superuser)])

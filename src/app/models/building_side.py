@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey,DateTime,Float 
+from sqlalchemy import Column, String, ForeignKey,DateTime,Float ,Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import UTC, datetime
 from ..core.db.database import Base
@@ -8,7 +8,7 @@ class BuildingSide(Base):
     __tablename__ = "building_side"
 
     id: Mapped[int] = mapped_column("id", autoincrement=True, nullable=False, unique=True, primary_key=True, init=False)
-    building_id: Mapped[int] = mapped_column(ForeignKey("buildings.id"), index=True)
+    building_id = Column(Integer, ForeignKey("buildings.id"), nullable=False)  
     name: Mapped[str] = mapped_column(String(50))
     description: Mapped[str | None] = mapped_column(String(255), default=None)
     orientation_degrees: Mapped[float] = mapped_column(Float,  default="0.0", nullable=False)

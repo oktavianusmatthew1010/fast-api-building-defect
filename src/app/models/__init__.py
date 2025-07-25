@@ -8,5 +8,9 @@ from .subcategory import SubCategory
 from .building import Building
 from .building_level import BuildingLevel
 from .building_side import BuildingSide
-from .defect import Defect
+
 from .defect_type import DefectType
+
+from .defect import Defect
+
+

@@ -1,9 +1,10 @@
 import uuid as uuid_pkg
 from datetime import UTC, datetime
-from sqlalchemy import DateTime, ForeignKey, String,Integer,Float
+from sqlalchemy import Column, DateTime, ForeignKey, String,Integer,Float
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
 from app.core.db.database import Base
+from ..models.building_level import BuildingLevel
 
 
 class Building(Base):
@@ -28,7 +29,10 @@ class Building(Base):
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     is_deleted: Mapped[bool] = mapped_column(default=False, index=True)
     
-    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), index=True, default=None, init=False)
-
     
+    
+    project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
+    levels = relationship("BuildingLevel", back_populates="building", cascade="all, delete-orphan")
+
+    project = relationship("Project", back_populates="buildings")
     

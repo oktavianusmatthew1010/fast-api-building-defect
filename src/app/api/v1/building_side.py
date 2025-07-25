@@ -65,9 +65,9 @@ async def patch_building_side(
 
 @router.delete("/buildingside/{name}", dependencies=[Depends(get_current_superuser)])
 async def erase_building_type(request: Request, name: str, db: Annotated[AsyncSession, Depends(async_get_db)]) -> dict[str, str]:
-    db_building_type = await crud_building_type.get(db=db, name=name, schema_to_select=BuildingTypeRead)
+    db_building_type = await crud_building_side.get(db=db, name=name, schema_to_select=BuildingSideRead)
     if db_building_type is None:
-        raise NotFoundException("Building Type not found")
+        raise NotFoundException("Building Side not found")
 
-    await crud_building_type.delete(db=db, name=name)
-    return {"message": "Building Type deleted"}
+    await BuildingSideRead.delete(db=db, name=name)
+    return {"message": "Building Side deleted"}

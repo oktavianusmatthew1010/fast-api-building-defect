@@ -7,7 +7,11 @@ from ..core.schemas import TimestampSchema
 
 
 class BuildingLevelBase(BaseModel):
-    name: Annotated[str, Field(examples=["Level 1, Level 2"])]
+    level_name: Annotated[str, Field(examples=["Level 1, Level 2"])]
+    building_id: int | None
+   
+    description: str | None = None
+    primary_usage: str | None = None
 
 
 class BuildingLevel(TimestampSchema, BuildingLevelBase):
@@ -15,8 +19,10 @@ class BuildingLevel(TimestampSchema, BuildingLevelBase):
 
 
 class BuildingLevelRead(BuildingLevelBase):
-    id: int
-    created_at: datetime
+    building_id: int | None
+
+    
+
 
 
 class BuildingLevelCreate(BuildingLevelBase):
@@ -28,7 +34,7 @@ class BuildingLevelCreateInternal(BuildingLevelCreate):
 
 
 class BuildingLevelUpdate(BaseModel):
-    name: str | None = None
+    level_number: str | None = None
 
 
 class BuildingLevelUpdateInternal(BuildingLevelUpdate):

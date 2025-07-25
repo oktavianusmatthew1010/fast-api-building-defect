@@ -8,6 +8,7 @@ from ..core.schemas import TimestampSchema
 
 class BuildingSideBase(BaseModel):
     name: Annotated[str, Field(examples=["North, East"])]
+    building_id: Annotated[int, Field(examples=["1"])]
 
 
 class BuildingSide(TimestampSchema, BuildingSideBase):
