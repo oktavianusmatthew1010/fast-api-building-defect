@@ -13,12 +13,14 @@ class Project(Base):
     name: Mapped[str] = mapped_column(String(100))
     description: Mapped[str] = mapped_column(String(500), default="")
     address_detail: Mapped[str] = mapped_column(String(200), default="")
-    latitude: Mapped[int] = mapped_column(String(20),  default="0", nullable=False)
-    longtitude: Mapped[int] = mapped_column(String(20),  default="0", nullable=False)
-    customer_id : Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
     status : Mapped[int] = mapped_column(Integer, default="0", nullable=False)
     created_by : Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default_factory=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
 
-    buildings = relationship("Building", back_populates="project")
+    buildings = relationship(
+    "Building", 
+    back_populates="project",
+    cascade="all, delete-orphan"
+)
+    

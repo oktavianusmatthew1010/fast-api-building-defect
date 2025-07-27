@@ -14,6 +14,7 @@ class Building(Base):
     name: Mapped[str] = mapped_column(String(100))
     address: Mapped[str] = mapped_column(String(500), default="")
     year_built: Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
+    
     building_type: Mapped[int]= mapped_column(Integer,  default="0", nullable=False)
     area_sq_meters: Mapped[float] = mapped_column(Float,  default="0.0", nullable=False)
     levels_count: Mapped[int] = mapped_column(Integer,  default="0", nullable=False)
@@ -30,9 +31,16 @@ class Building(Base):
     is_deleted: Mapped[bool] = mapped_column(default=False, index=True)
     
     
-    
-    project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
-    levels = relationship("BuildingLevel", back_populates="building", cascade="all, delete-orphan")
+    project_id: Mapped[int | None] = mapped_column(
+    ForeignKey("projects.id"), 
+    index=True, 
+    default=None
+    # Remove init=False to allow this to be set during initialization
+)
 
-    project = relationship("Project", back_populates="buildings")
+    project = relationship(
+    "Project", 
+    back_populates="buildings",
+    lazy="joined"  # Add this to always load the relationship
+)
     

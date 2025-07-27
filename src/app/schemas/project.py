@@ -7,12 +7,11 @@ from ..core.schemas import TimestampSchema
 
 
 class ProjectBase(BaseModel):
-    name: Annotated[str, Field(examples=["free"])]
-    description: Annotated[str, Field(min_length=1, max_length=63206, examples=["This is the content of my post."])]
-    latitude: Annotated[str, Field(examples=[1.100000])]
-    longtitude: Annotated[str, Field(example=[1.00000])]
+    name: Annotated[str, Field(examples=["Project Name"])]
+    description: Annotated[str, Field(min_length=1, max_length=63206, examples=["This is the des "])]
+    address_detail: Annotated[str, Field(min_length=1, max_length=63206, examples=["This is address"])]
+    
     status:int | None = None
-    customer_id:int
     created_by: int
     
 

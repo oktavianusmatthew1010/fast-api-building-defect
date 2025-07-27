@@ -1,14 +1,16 @@
 from typing import Annotated, Any, cast
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastcrud.paginated import PaginatedListResponse, compute_offset, paginated_response
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.app.models.building import Building
 
 from ...api.dependencies import get_current_superuser
 from ...core.db.database import async_get_db
 from ...core.exceptions.http_exceptions import DuplicateValueException, NotFoundException
 from ...crud.crud_building import crud_building
-from ...schemas.building import BuildingCreate, BuildingCreateInternal, BuildingRead, BuildingUpdate
+from ...schemas.building import BuildingCreate, BuildingCreateInternal, BuildingRead, BuildingUpdate, format_building_response
 
 router = APIRouter(tags=["buildings"])
 
@@ -34,13 +36,34 @@ async def write_building(
 
 @router.get("/buildings", response_model=PaginatedListResponse[BuildingRead])
 async def read_buildings(
-    request: Request, db: Annotated[AsyncSession, Depends(async_get_db)], page: int = 1, items_per_page: int = 10
+    request: Request, 
+    db: Annotated[AsyncSession, Depends(async_get_db)], 
+    page: int = 1, 
+    items_per_page: int = 10
 ) -> dict:
-    buildings_data = await crud_building.get_multi(db=db, offset=compute_offset(page, items_per_page), limit=items_per_page)
+    buildings_data = await crud_building.get_multi(
+        db=db, 
+        offset=compute_offset(page, items_per_page), 
+        limit=items_per_page
+    )
 
-    response: dict[str, Any] = paginated_response(crud_data=buildings_data, page=page, items_per_page=items_per_page)
+    response: dict[str, Any] = paginated_response(
+        crud_data=buildings_data, 
+        page=page, 
+        items_per_page=items_per_page
+    )
     return response
 
+
+
+
+@router.get("/building/{building_id}")
+async def get_building(building_id: int, db: AsyncSession = Depends(async_get_db)):
+    building = await db.get(Building, building_id)
+    if not building:
+        raise HTTPException(status_code=404, detail="Building not found")
+    
+    return format_building_response(building)
 
 @router.get("/building/{name}", response_model=BuildingRead)
 async def read_building(request: Request, name: str, db: Annotated[AsyncSession, Depends(async_get_db)]) -> BuildingRead:

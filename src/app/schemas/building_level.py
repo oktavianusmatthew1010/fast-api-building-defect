@@ -22,9 +22,6 @@ class BuildingLevelRead(BuildingLevelBase):
     building_id: int | None
 
     
-
-
-
 class BuildingLevelCreate(BuildingLevelBase):
     pass
 
