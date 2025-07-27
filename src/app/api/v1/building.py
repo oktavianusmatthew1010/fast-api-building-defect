@@ -1,4 +1,4 @@
-from typing import Annotated, Any, cast
+from typing import Annotated, Any, Optional, cast
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastcrud.paginated import PaginatedListResponse, compute_offset, paginated_response
@@ -38,13 +38,15 @@ async def write_building(
 async def read_buildings(
     request: Request, 
     db: Annotated[AsyncSession, Depends(async_get_db)], 
+    search: Optional[str] = None,
     page: int = 1, 
     items_per_page: int = 10
 ) -> dict:
     buildings_data = await crud_building.get_multi(
         db=db, 
+        
         offset=compute_offset(page, items_per_page), 
-        limit=items_per_page
+        limit=items_per_page,
     )
 
     response: dict[str, Any] = paginated_response(
@@ -53,6 +55,7 @@ async def read_buildings(
         items_per_page=items_per_page
     )
     return response
+
 
 
 

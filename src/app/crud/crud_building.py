@@ -19,3 +19,5 @@ async def get_multi(db: AsyncSession, *, offset: int = 0, limit: int = 100):
         .limit(limit)
     )
     return result.scalars().all()
+
+
