@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Optional
 
 from pydantic import BaseModel, Field
 
@@ -9,21 +9,23 @@ from ..core.schemas import TimestampSchema
 class ProjectBase(BaseModel):
     name: Annotated[str, Field(examples=["Project Name"])]
     description: Annotated[str, Field(min_length=1, max_length=63206, examples=["This is the des "])]
-    address_detail: Annotated[str, Field(min_length=1, max_length=63206, examples=["This is address"])]
-    
+    address_detail: Optional[str] = ""
     status:int | None = None
-    created_by: int
+   
     
 
 
 class Project(TimestampSchema, ProjectBase):
-    created_by: int
+    id: int
+    is_deleted: bool
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    deleted_at: Optional[datetime] = None
 
 
 class ProjectRead(ProjectBase):
-    id: int
-    created_at: datetime
-    created_by: int
+    pass
+  
 
 
 class ProjectCreate(ProjectBase):
@@ -31,7 +33,7 @@ class ProjectCreate(ProjectBase):
 
 
 class ProjectCreateInternal(ProjectCreate):
-    pass
+    created_by: int
 
 
 class ProjectUpdate(BaseModel):
@@ -40,7 +42,7 @@ class ProjectUpdate(BaseModel):
 
 class ProjectUpdateInternal(ProjectUpdate):
     updated_at: datetime
-    created_by: int
+   
 
 
 class ProjectDelete(BaseModel):

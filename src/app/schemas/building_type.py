@@ -8,6 +8,7 @@ from ..core.schemas import TimestampSchema
 
 class BuildingTypeBase(BaseModel):
     name: Annotated[str, Field(examples=["Apartment"])]
+    description: Annotated[str | None, Field(max_length=255, default=None)]
 
 
 class BuildingType(TimestampSchema, BuildingTypeBase):

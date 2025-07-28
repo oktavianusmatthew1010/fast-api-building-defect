@@ -41,11 +41,10 @@ async def write_post(
 
     return cast(ProjectRead, project_read)
 
-@router.post("/project", dependencies=[Depends(get_current_superuser)], status_code=201)
+@router.post("/project", status_code=201)
 async def write_project(    
-    request: Request, project: ProjectCreate,current_user: Annotated[dict, Depends(get_current_user)], db: Annotated[AsyncSession, Depends(async_get_db)]
+    request: Request, project: ProjectCreate, db: Annotated[AsyncSession, Depends(async_get_db)]
 ) -> ProjectRead:
-    db_user = await crud_users.get(db=db, id=current_user["id"], is_deleted=False, schema_to_select=UserRead)
     
     project_internal_dict = project.model_dump()
     
@@ -53,8 +52,8 @@ async def write_project(
 
     if db_project:
         raise DuplicateValueException("Project Name not available")
-    user_id = db_user["id"] if isinstance(db_user, dict) else db_user["id"]
-    project_internal_dict["created_by"] = user_id
+    user_id = 1
+    project_internal_dict["created_by"] = 1
     project_internal = ProjectCreateInternal(**project_internal_dict)
     created_project = await crud_project.create(db=db, object=project_internal)
 
@@ -63,6 +62,7 @@ async def write_project(
         raise NotFoundException("Created Project not found")
 
     return cast(ProjectRead, project_read)
+
 
 
 @router.get("/projects", response_model=PaginatedListResponse[ProjectRead])
