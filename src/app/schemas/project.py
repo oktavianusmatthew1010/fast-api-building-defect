@@ -24,7 +24,7 @@ class Project(TimestampSchema, ProjectBase):
 
 
 class ProjectRead(ProjectBase):
-    pass
+    id: int
   
 
 

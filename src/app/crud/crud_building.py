@@ -20,4 +20,12 @@ async def get_multi(db: AsyncSession, *, offset: int = 0, limit: int = 100):
     )
     return result.scalars().all()
 
+async def get(db: AsyncSession, id: int, schema_to_select=None):
+    result = await db.execute(
+        select(Building)
+        .options(selectinload(Building.project))  # <== IMPORTANT!
+        .where(Building.id == id)
+    )
+    obj = result.scalar_one_or_none()
+    return obj 
 

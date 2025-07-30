@@ -33,6 +33,7 @@ class BuildingBase(BaseModel):
     status_construction: Annotated[float, Field(examples=[0.5])]
     construction_start_date: Optional[datetime] = None
     construction_end_date: Optional[datetime] = None
+    
     class Config:
         from_attributes = True
         
@@ -56,6 +57,7 @@ class BuildingRead(Building):
     
     class Config:
         from_attributes = True
+        orm_mode = True
 class BuildingCreate(BuildingBase):
     pass
 
@@ -91,6 +93,46 @@ BuildingWithProject.update_forward_refs()
 
 
 def format_building_response(building: BuildingBase) -> dict:
+    return {
+        "name": building.name,
+        "address": building.address,
+        "year_built": building.year_built,
+        "building_type": building.building_type,
+        "area_sq_meters": building.area_sq_meters,
+        "levels_count": building.levels_count,
+        "sides_count": building.sides_count,
+        "owner_id": building.owner_id,
+        "project_id": building.project_id if building.project_id else 0,
+        "latitude": building.latitude,
+        "longitude": building.longitude,
+        "status_construction": building.status_construction,
+        "construction_start_date": building.construction_start_date.isoformat() + "Z" if building.construction_start_date else None,
+        "construction_end_date": building.construction_end_date.isoformat() + "Z" if building.construction_end_date else None,
+        "created_at": "string",  # Or use actual value
+        "updated_at": "string",  # Or use actual value
+        "id": building.id,
+        "is_deleted": building.is_deleted,
+        "deleted_at": building.deleted_at.isoformat() + "Z" if building.deleted_at else None,
+        "project": {
+            "name": building.project.name if building.project else "string",
+            "description": building.project.description if building.project else "string",
+            "address_detail": building.project.address_detail if building.project else "string",
+            "status": building.project.status if building.project else 0,
+            "created_by": building.project.created_by if building.project else 0,
+            "id": building.project.id if building.project else 0,
+            "created_at": building.project.created_at.isoformat() + "Z" if building.project and building.project.created_at else "2025-07-27T04:44:00.859Z"
+        } if building.project_id else {
+            "name": "string",
+            "description": "string",
+            "address_detail": "string",
+            "status": 0,
+            "created_by": 0,
+            "id": 0,
+            "created_at": "2025-07-27T04:44:00.859Z"
+        }
+    }
+
+def format_building_add_response(building: BuildingBase) -> dict:
     return {
         "name": building.name,
         "address": building.address,

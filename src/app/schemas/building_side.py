@@ -9,8 +9,8 @@ from ..core.schemas import TimestampSchema
 class BuildingSideBase(BaseModel):
     name: Annotated[str, Field(examples=["North, East"])]
     building_id: Annotated[int, Field(examples=["1"])]
-
-
+    description: Annotated[str | None, Field(max_length=255, default=None)]
+    orientation_degrees:Annotated[float, Field(examples=["0.0"])]
 class BuildingSide(TimestampSchema, BuildingSideBase):
     pass
 
@@ -21,7 +21,7 @@ class BuildingSideRead(BuildingSideBase):
 
 
 class BuildingSideCreate(BuildingSideBase):
-    pass
+    building_id: int
 
 
 class BuildingSideCreateInternal(BuildingSideCreate):

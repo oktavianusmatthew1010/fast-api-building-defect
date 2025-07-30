@@ -1,9 +1,10 @@
+import select
 from typing import Annotated, Any, Optional, cast
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastcrud.paginated import PaginatedListResponse, compute_offset, paginated_response
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from sqlalchemy import select
 from src.app.models.building import Building
 
 from ...api.dependencies import get_current_superuser
@@ -11,27 +12,43 @@ from ...core.db.database import async_get_db
 from ...core.exceptions.http_exceptions import DuplicateValueException, NotFoundException
 from ...crud.crud_building import crud_building
 from ...schemas.building import BuildingCreate, BuildingCreateInternal, BuildingRead, BuildingUpdate, format_building_response
+from sqlalchemy.orm import selectinload
 
 router = APIRouter(tags=["buildings"])
 
 
 @router.post("/building", dependencies=[Depends(get_current_superuser)], status_code=201)
 async def write_building(
-    request: Request, building: BuildingCreate, db: Annotated[AsyncSession, Depends(async_get_db)]
+    request: Request,
+    building: BuildingCreate,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
 ) -> BuildingRead:
     building_internal_dict = building.model_dump()
+    
+    # Check if building name exists
     db_building = await crud_building.exists(db=db, name=building_internal_dict["name"])
     if db_building:
         raise DuplicateValueException("Building Name not available")
 
+    # Save to DB
     building_internal = BuildingCreateInternal(**building_internal_dict)
     created_building = await crud_building.create(db=db, object=building_internal)
 
-    building_read = await crud_building.get(db=db, id=created_building.id, schema_to_select=BuildingRead)
-    if building_read is None:
+    # Refetch from DB with related project loaded
+    result = await db.execute(
+        select(Building)
+        .options(selectinload(Building.project))
+        .where(Building.id == created_building.id)
+    )
+    building_with_project = result.scalar_one_or_none()
+    if building_with_project is None:
         raise NotFoundException("Created Building not found")
 
-    return cast(BuildingRead, building_read)
+    # Convert to Pydantic safely
+    return BuildingRead.from_orm(building_with_project)
+
+
+
 
 
 @router.get("/buildings", response_model=PaginatedListResponse[BuildingRead])

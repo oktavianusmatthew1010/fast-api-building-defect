@@ -1,6 +1,6 @@
 import uuid as uuid_pkg
 from datetime import UTC, datetime
-from sqlalchemy import Column, DateTime, ForeignKey, String,Integer,Float
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String,Integer,Float, func
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
 from app.core.db.database import Base
@@ -25,22 +25,26 @@ class Building(Base):
     status_construction : Mapped[int] = mapped_column(Float,  default="0.0", nullable=False)
     construction_start_date : Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     construction_end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default_factory=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
-    is_deleted: Mapped[bool] = mapped_column(default=False, index=True)
-    
+    is_deleted = Column(Boolean, default=False, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now()  
+    )
     
     project_id: Mapped[int | None] = mapped_column(
     ForeignKey("projects.id"), 
     index=True, 
     default=None
-    # Remove init=False to allow this to be set during initialization
+    
 )
 
     project = relationship(
     "Project", 
     back_populates="buildings",
-    lazy="joined"  # Add this to always load the relationship
+    lazy="joined"  
 )
+    
     
